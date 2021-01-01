@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+        <h3> Goal List <a href="{% url 'admin:core_goal_add'  %}" class="btn btn-primary mb-2">Add</a></h3>
+        <div class="form-group mb-2">  {% crispy form %} </div>
+
+        {% if object_list %}
+            <div class="row border border-secondary">
+                <div class="col-1 "> ID</div>
+                <div class="col-3 "> Name</div>
+                <div class="col-3 "> Due Date</div>
+                <div class="col-2"> Labels</div>
+                <div class="col-1"> Details</div>
+            </div>
+        {% endif %}
+        {% for goal in object_list %}
+            <div class="row border border-secondary"
+                 style="{% if forloop.counter|divisibleby:2 %}background-color:#efeeee{% endif %}">
+
+                <div class="col-1 ">
+                    <a href={% url 'admin:core_goal_change' goal.id %}>{{ goal.id }}</a>
+                </div>
+
+                <div class="col-3"><a
+                        href={% url 'core:goal_detail' goal.id %}>{{ goal.name }}</a></div>
+                <div class="col-3"> {{ goal.due_date|date:'Y.m.d' }} </div>
+
+                <div class="col-2">    {% for label in goal.label.all %}
+
+                    <span class="badge" style="background-color:{{ label.color_code }}">{{ label.name }}</span>
+                {% endfor %}    </div>
+
+                <div class="col-1">
+                    <button class="btn btn-outline-dark" type="button" data-toggle="collapse"
+                            data-target="#collapseExample-{{ goal.id }}"
+                            aria-expanded="false" aria-controls="collapseExample">
+                        Details
+                    </button>
+                </div>
+
+            </div>
+            <div class="collapse" id="collapseExample-{{ goal.id }}">
+
+                <div class="container-fluid border border-lg mt-2 mb-2">
+
+                    <p><span
+                            style="color: black;font-size: 20px;"> Created Date :    </span> {{ goal.created_date|date:'Y.m.d' }}
+                    </p>
+
+                    <p><span style="color: black;font-size: 20px"> Subjects:</span>
+                        {% for subject in goal.subject.all %}{{ subject }}{% if not forloop.last %},
+                        {% endif %}{% endfor %}</p>
+
+
+                    <p><span style="color: black;font-size: 20px">  Subtopics:</span>
+                        {% for subtopic in goal.subtopic.all %}{{ subtopic }}{% if not forloop.last %},
+                        {% endif %}{% endfor %}</p>
+                    <p><span style="color: black;font-size: 20px">  Description:</span>
+                        {{ goal.description |safe }}
+                        <a href="{% url 'admin:core_goal_change' goal.pk %}" class="btn btn-primary mb-2">Update</a>
+                        <a href="{% url 'admin:core_goal_delete' goal.pk %}" class="btn btn-danger mb-2">Delete</a>
+
+
+                </div>
+            </div>
+
+        {% empty %}
+            <h3> No records. </h3>
+        {% endfor %}
+
+        {% if is_paginated %}
+            <div class="paginator-center">
+                Total Page : {% blocktrans with total_no=paginator.num_pages %}{{ total_no }} {% endblocktrans %}
+                Current Page : {% blocktrans with page_no=page_obj.number %}{{ page_no }} {% endblocktrans %}
+                <nav class="mt-2">
+                    <div class="paginator-numbers">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a href="?{% url_replace request 'page' 1 %}" class="page-link">
+                                    {% trans "first" %}
+                                </a>
+                            </li>
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a href="?{% url_replace request 'page' page_obj.previous_page_number %}"
+                                       class="page-link">
+                                        {{ page_obj.previous_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="page-item active">
+                                <a href="?{% url_replace request 'page' page_obj.number %}" class="page-link">
+                                    {{ page_obj.number }}
+                                </a>
+                            </li>
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a href="?{% url_replace request 'page' page_obj.next_page_number %}"
+                                       class="page-link">
+                                        {{ page_obj.next_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a href="?{% url_replace request 'page' 'last' %}" class="page-link">
+                                    {% trans "last" %}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {#    <script>#}
+    $(document).ready(function () {
+    $("#id_label").change(function () {
+    console.log('change')
+    var selected = $("#id_label option:selected").text();
+    if (selected.includes('All')) {
+    $('#id_label option').prop('selected', true);
+    }
+    });
+    });
+    {#    </script>#}
+{% endblock scripts %}

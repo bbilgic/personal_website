@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+        <h3> Pomodoro Report </h3>
+
+        <div class="form-group mb-2">  {% crispy form %} </div>
+     <h4>  Total : {{ grand_total }}</h4>
+    </div>
+
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+        {% if object_list %}
+            <div class="row border border-secondary">
+            <div class="col-2 text-center"> Task ID </div>
+                <div class="col-6 text-center"> Task</div>
+                <div class="col-4 text-center"> Pomodoro Count</div>
+            </div>
+        {% endif %}
+        {% for item_ in object_list %}
+            <div class="row border border-secondary"  style="{% if forloop.counter|divisibleby:2 %}background-color:#efeeee{% endif %}">
+             <div class="col-2 text-center">  <a href={% url 'core:task_detail' item_.task %}>{{ item_.task }}</a> </div>
+                <div class="col-6 text-center">   {{ item_.task__title }}</div>
+                <div class="col-4 text-center">  {{ item_.total_pomodoro }}  </div>
+            </div>
+        {% empty %}
+            <h3> No records. </h3>
+        {% endfor %}
+    </div>
+    <div class="container">
+        {% if is_paginated %}
+            <div class="paginator-center">
+                Total Page : {% blocktrans with total_no=paginator.num_pages %}{{ total_no }} {% endblocktrans %}
+                Current Page : {% blocktrans with page_no=page_obj.number %}{{ page_no }} {% endblocktrans %}
+                <nav class="mt-2">
+                    <div class="paginator-numbers">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a href="?{% url_replace request 'page' 1 %}" class="page-link">
+                                    {% trans "first" %}
+                                </a>
+                            </li>
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a href="?{% url_replace request 'page' page_obj.previous_page_number %}"
+                                       class="page-link">
+                                        {{ page_obj.previous_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="page-item active">
+                                <a href="?{% url_replace request 'page' page_obj.number %}" class="page-link">
+                                    {{ page_obj.number }}
+                                </a>
+                            </li>
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a href="?{% url_replace request 'page' page_obj.next_page_number %}"
+                                       class="page-link">
+                                        {{ page_obj.next_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a href="?{% url_replace request 'page' 'last' %}" class="page-link">
+                                    {% trans "last" %}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+        $(document).ready(function () {
+            $("#id_label").change(function () {
+                console.log('change')
+                var selected = $("#id_label option:selected").text();
+                if (selected.includes('All')) {
+                    $('#id_label option').prop('selected', true);
+                }
+            });
+
+            $('.add-pomodoro-form').submit(function (e) {
+                e.preventDefault()
+                task_id = $(this).attr('id')
+                task_id = task_id.replace('add-', '')
+                const url = $(this).attr('action')
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                    },
+                    success: function (response) {
+                        var result = response
+                        $(`.pomodoro-count${task_id}`).text(result['pomodoro'])
+
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+
+            });
+            $('.remove-pomodoro-form').submit(function (e) {
+                e.preventDefault()
+                task_id = $(this).attr('id')
+                task_id = task_id.replace('remove-', '')
+                const url = $(this).attr('action')
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                    },
+                    success: function (response) {
+                        var result = response
+                        $(`.pomodoro-count${task_id}`).text(result['pomodoro'])
+
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+
+            });
+
+            $('.task-date-form').submit(function (e) {
+                e.preventDefault()
+                date_task = $(this).attr('id');
+                date_task = date_task.split('-');
+                date_time = date_task[0];
+                task_id = date_task[1];
+                const url = $(this).attr('action');
+                const task_closed=0;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                        'date_time':date_time
+                    },
+                    success: function (response) {
+                        var result = response
+                        $(`#set-date-${task_id}`).text(result['date_time'])
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+
+            });
+
+            $('.selection-box').change(function (e) {
+                e.preventDefault()
+                closed_task = $(this).attr('id');
+                closed_task = closed_task.split('-');
+                const closed =   $(this).val()
+                const task_id = closed_task[1];
+                const url = $(this).attr('name');
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                        'task_closed': closed
+                    },
+                    success: function (response) {
+                        var result = response;
+                        var closed =result['task_closed']
+                        $(`#closed-${task_id}`).val(result['task_closed']);
+                    },
+                    error: function (response) {
+                        console.log('error', response);
+                    }
+
+
+            });
+                });
+
+        });
+
+
+
+
+{% endblock scripts %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+        {% if object %}
+            {% if object.value_text %}
+                <h3 class="mb-2"> Values</h3>
+                <div class="mb-2"> {{ object.value_text | safe }}</div>
+            {% endif %}
+            {% if  object.vision_text %}
+                <h3 class="mb-2"> Vision </h3>
+                <div class="mb-2"> {{ object.vision_text | safe }}</div>
+            {% endif %}
+            {% if object.mission_text %}
+                <h3 class="mb-2"> Mission</h3>
+                <div class="mb-2"> {{ object.mission_text | safe }}</div>
+            {% endif %}
+            <a href="{% url 'admin:core_valuevisionmission_change' object.pk %}" class="btn btn-primary">Update</a>
+            <a href="{% url 'admin:core_valuevisionmission_delete' object.pk %}" class="btn btn-danger">Delete</a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {#    <script>#}
+
+    {#    </script>#}
+{% endblock scripts %}

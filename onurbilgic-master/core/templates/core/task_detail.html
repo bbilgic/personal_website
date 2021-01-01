@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container border border-lg mt-2 mb-2" style="display:block;overflow:auto">
+        <h2>  {{ task.id }} -    {{ task.title }}  <a href={% url 'core:task_copy' task.id %}><i class="fas fa-copy"></i></a>
+        </h2>
+        <div class="row mt-1 ">
+            <div class="col-sm-2"><span style="color: black;font-size: 20px;">  Closed : </span></div>
+            <div class="col-sm-1 ">
+                <form action="{% url 'core:task_closed' task.id %}" method="post" class="closed-button btn-lg" >
+                    {% csrf_token %}
+                    <input id="closed-{{ task.id }}" class="selection-box" type="checkbox"
+                           name="{% url 'core:task_closed' task.id %}"  {% if task.closed %}
+                           checked{% else %} {% endif %} value="{{ task.closed }}">
+                </form>
+            </div>
+        </div>
+        <div class="row mt-1 ">
+            <div class="col-sm-2"><span style="color: black;font-size: 20px;">  Pomodoro : </span></div>
+            <div class="col-sm-2 " style="color: black;font-size: 22px;">
+                <div class="pomodoro-count{{ task.id }}"> {{ task.pomodoro_count }} </div>
+            </div>
+            <div class="col-sm-1 ">
+                <form action="{% url 'core:pomodoro_add' task.id %}" method="post" class="add-pomodoro-form"
+                      id="add-{{ task.id }}">
+                    {% csrf_token %}
+                    <button type="submit" class="add-pomodoro-form{{ task.id }}"><i
+                            class="fas fa-plus btn-lg" style="color: blue"></i></button>
+                </form>
+            </div>
+            <div class="col-sm-1 ">
+                <form action="{% url 'core:pomodoro_remove' task.id %}" method="post"
+                      class="remove-pomodoro-form" id="remove-{{ task.id }}">
+                    {% csrf_token %}
+                    <button type="submit" class="remove-pomodoro-form{{ task.id }}"><i
+                            class="fas fa-minus btn-lg"
+                            style="color: red"></i></button>
+                </form>
+            </div>
+        </div>
+        <p><span style="color: black;font-size: 20px;"> Points :    </span> {{ task.points }}  </p>
+        <p><span
+                style="color: black;font-size: 20px;"> Action Date :    </span>
+            <span id="set-date-{{ task.id }}"> {{ task.action_date|date:'Y.m.d h:i' }}  </span>
+
+        </p>
+
+        <div class="row mt-1 ">
+            <div class="col-sm-2"><span style="color: black;font-size: 20px;">  Set Action Date : </span>
+            </div>
+            <div class="col-sm-2">
+                <form action="{% url 'core:task_date' task.id %}" method="post" class="task-date-form"
+                      id="today-{{ task.id }}">
+                    {% csrf_token %}
+                    <button type="submit" class="date-today-form{{ task.id }}" value="today">Today</button>
+                </form>
+            </div>
+            <div class="col-sm-2">
+                <form action="{% url 'core:task_date' task.id %}" method="post" class="task-date-form"
+                      id="tomorrow-{{ task.id }}">
+                    {% csrf_token %}
+                    <button type="submit" class="date-tomorrow-form{{ task.id }}" value="tomorrow">
+                        Tomorrow
+                    </button>
+                </form>
+            </div>
+            <div class="col-sm-2">
+                <form action="{% url 'core:task_date' task.id %}" method="post" class="task-date-form"
+                      id="two_weeks-{{ task.id }}">
+                    <button type="submit" class="date-two-weeks-form{{ task.id }}" value="two_weeks">Two
+                        Weeks
+                    </button>
+                </form>
+            </div>
+            <div class="col-sm-2">
+                <form action="{% url 'core:task_date' task.id %}" method="post" class="task-date-form"
+                      id="one_month-{{ task.id }}">
+                    <button type="submit" class="date-one-month-form{{ task.id }}" value="one_month">One
+                        Month
+                    </button>
+                </form>
+            </div>
+        </div>
+        <p><span
+                style="color: black;font-size: 20px;"> Due Date :    </span> {{ task.due_date|date:'Y.m.d' }}
+        </p>
+
+        <p><span
+                style="color: black;font-size: 20px;"> Created Date :    </span> {{ task.created_date|date:'Y.m.d' }}
+        </p>
+
+
+        <p><span style="color: black;font-size: 20px"> Subjects:</span>
+            {% for subject in task.subject.all %}{{ subject }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+
+        <p><span style="color: black;font-size: 20px">  Subtopics:</span>
+            {% for subtopic in task.subtopic.all %}{{ subtopic }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+
+        <p><span style="color: black;font-size: 20px">  Goals:</span>
+            {% for goal in task.goal.all %}{{ goal }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+
+
+        <p><span style="color: black;font-size: 20px">  Description:</span></p>
+        {{ task.description |safe }}
+        <a href="{% url 'core:task_update' task.pk %}" class="btn btn-primary mt-4 mb-2">Update</a>
+
+        <a href="{% url 'core:task_delete' task.pk %}" class="btn btn-danger mt-4 mb-2">Delete</a>
+
+
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    $(document).ready(function () {
+    $("#id_label").change(function () {
+    console.log('change')
+    var selected = $("#id_label option:selected").text();
+    if (selected.includes('All')) {
+    $('#id_label option').prop('selected', true);
+    }
+    });
+
+    $('.add-pomodoro-form').submit(function (e) {
+    e.preventDefault()
+    task_id = $(this).attr('id')
+    task_id = task_id.replace('add-', '')
+    const url = $(this).attr('action')
+    $.ajax({
+    type: 'POST',
+    url: url,
+    data: {
+    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+    'pk': task_id,
+    },
+    success: function (response) {
+    var result = response
+    $(`.pomodoro-count${task_id}`).text(result['pomodoro'])
+
+    },
+    error: function (response) {
+    console.log('error', response)
+    }
+    })
+
+    });
+    $('.remove-pomodoro-form').submit(function (e) {
+    e.preventDefault()
+    task_id = $(this).attr('id')
+    task_id = task_id.replace('remove-', '')
+    const url = $(this).attr('action')
+
+    $.ajax({
+    type: 'POST',
+    url: url,
+    data: {
+    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+    'pk': task_id,
+    },
+    success: function (response) {
+    var result = response
+    $(`.pomodoro-count${task_id}`).text(result['pomodoro'])
+
+    },
+    error: function (response) {
+    console.log('error', response)
+    }
+    })
+
+    });
+
+    $('.task-date-form').submit(function (e) {
+    e.preventDefault()
+    date_task = $(this).attr('id');
+    date_task = date_task.split('-');
+    date_time = date_task[0];
+    task_id = date_task[1];
+    const url = $(this).attr('action');
+    const task_closed=0;
+    $.ajax({
+    type: 'POST',
+    url: url,
+    data: {
+    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+    'pk': task_id,
+    'date_time':date_time
+    },
+    success: function (response) {
+    var result = response
+    $(`#set-date-${task_id}`).text(result['date_time'])
+    },
+    error: function (response) {
+    console.log('error', response)
+    }
+    })
+
+    });
+
+    $('.selection-box').change(function (e) {
+    e.preventDefault()
+    closed_task = $(this).attr('id');
+    closed_task = closed_task.split('-');
+    const closed =   $(this).val()
+    const task_id = closed_task[1];
+    const url = $(this).attr('name');
+
+
+    $.ajax({
+    type: 'POST',
+    url: url,
+    data: {
+    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+    'pk': task_id,
+    'task_closed': closed
+    },
+    success: function (response) {
+    var result = response;
+    var closed =result['task_closed']
+    $(`#closed-${task_id}`).val(result['task_closed']);
+    },
+    error: function (response) {
+    console.log('error', response);
+    }
+
+
+    });
+    });
+
+    });
+
+
+
+
+{% endblock scripts %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+   <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+
+        <h1 class='posttitle loader'>{{ diary.title }}</h1>
+            <div class="date postdate">
+                {{ diary.created_date |date:'Y.m.d' }}
+            </div>
+         <div  style="padding-left: 1%;padding-right: 1%">{{ diary.text |safe }} </div>
+      {% if user.is_authenticated %}
+          <a class="btn btn-primary" href="{% url 'admin:core_diary_change' diary.pk %}"><i class="fas fa-pen"></i></a>
+          <a class="btn btn-danger" href="{% url 'admin:core_diary_delete' diary.pk %}"><i class="fas fa-trash" ></i></a>
+      {% endif %}
+    </div>
+{% endblock %}

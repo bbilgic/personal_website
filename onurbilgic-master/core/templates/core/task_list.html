@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+        <h3> Task List <a href="{% url 'core:task_new' %}" class="btn btn-primary mb-2">Add</a></h3>
+        <div class="form-group mb-2">  {% crispy form %} </div>
+    </div>
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+        {% if object_list %}
+            <div class="row border border-secondary">
+                <div class="col-1 text-center"> ID</div>
+                <div class="col-3 "> Title</div>
+                <div class="col-2 text-center"> Action Date</div>
+                <div class="col-2 text-center">Closed</div>
+                <div class="col-2 text-center"> Details</div>
+                <div class="col-2 text-center" style="overflow: auto"> Pomodoro</div>
+            </div>
+        {% endif %}
+        {% for task in object_list %}
+            <div class="row border border-secondary"
+                 style="{% if forloop.counter|divisibleby:2 %}background-color:#efeeee{% endif %}">
+                <div class="col-1 text-center">
+                    <a href={% url 'admin:core_task_change' task.id %}>{{ task.id }}</a>
+                    <a href={% url 'core:task_copy' task.id %}><i class="fas fa-copy"></i></a>
+                </div>
+                <div class="col-3" style="word-break: initial"><a
+                        href={% url 'core:task_detail' task.id %}>{{ task.title }}</a></div>
+                <div class="col-2 text-center" style="font-size: 13px"
+                     id="set-date-{{ task.id }}"> {{ task.action_date|date:'Y.m.d h:i' }} </div>
+                <div class="col-2 text-center">
+                    <div class="mt-2">
+                        <form action="{% url 'core:task_closed' task.id %}" method="post" class="closed-button"
+                              >
+                            {% csrf_token %}
+                            <input id="closed-{{ task.id }}"   class="selection-box" type="checkbox" name="{% url 'core:task_closed' task.id %}"  {% if task.closed %}
+                                   checked{% else %} {% endif %} value="{{ task.closed }}">
+                        </form>
+                    </div>
+                </div>
+                <div class="col-2 text-center" style="font-size: 11px">
+                    <button class="btn btn-outline-dark btn-sm" type="button" data-toggle="collapse"
+                            data-target="#collapseExample-{{ task.id }}"
+                            aria-expanded="false" aria-controls="collapseExample">
+                        Details
+                    </button>
+                </div>
+                <div class="col-2 text-center">
+                    <div class="pomodoro-count{{ task.id }}"> {{ task.pomodoro_count }} </div>
+                </div>
+            </div>
+            <div class="collapse" id="collapseExample-{{ task.id }}">
+                <div class="container-fluid border border-lg mt-2 mb-2"
+                     style="display:block;overflow:auto;{% if forloop.counter|divisibleby:2 %}background-color:#efeeee{% endif %}">
+                    <div class="row mt-1 ">
+                        <div class="col-sm-2"><span style="color: black;font-size: 20px;">  Pomodoro : </span></div>
+                        <div class="col-sm-2 " style="color: black;font-size: 22px;">
+                            <div class="pomodoro-count{{ task.id }}"> {{ task.pomodoro_count }} </div>
+                        </div>
+                        <div class="col-sm-1 ">
+                            <form action="{% url 'core:pomodoro_add' task.id %}" method="post" class="add-pomodoro-form"
+                                  id="add-{{ task.id }}">
+                                {% csrf_token %}
+                                <button type="submit" class="add-pomodoro-form{{ task.id }}"><i
+                                        class="fas fa-plus btn-lg" style="color: blue"></i></button>
+                            </form>
+                        </div>
+                        <div class="col-sm-1 ">
+                            <form action="{% url 'core:pomodoro_remove' task.id %}" method="post"
+                                  class="remove-pomodoro-form" id="remove-{{ task.id }}">
+                                {% csrf_token %}
+                                <button type="submit" class="remove-pomodoro-form{{ task.id }}"><i
+                                        class="fas fa-minus btn-lg"
+                                        style="color: red"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                   <div class="row mb-2">
+                        <div class="col-sm-2">    <span style="color: black;font-size: 20px;">  Labels : </span>    </div>
+                    <div class="col-sm-8"><span style="color: black;font-size: 20px;">      {% for label in task.label.all %}
+
+                    <span class="badge" style="background-color:{{ label.color_code }}">{{ label.name }}</span>
+                    {% if not forloop.last %} ,{% endif %}
+                {% empty %}
+                {% endfor %} </span></div>
+
+
+                         </div>
+                    <p><span style="color: black;font-size: 20px;"> Points :    </span> {{ task.points }}  </p>
+                    <p><span
+                            style="color: black;font-size: 20px;"> Due Date :    </span> {{ task.due_date|date:'Y.m.d' }}
+                    </p>
+                    <div class="row mt-1 ">
+                        <div class="col-sm-2"><span style="color: black;font-size: 20px;">  Set Action Date : </span>
+                        </div>
+                        <div class="col-sm-2">
+                            <form action="{% url 'core:task_date' task.id %}" method="post" class="task-date-form"  id="actiondate-{{ task.id }}">
+                                  {% csrf_token %}
+                                <div id="div_id_action_date_{{ task.id }}" class="control-group"> <div class="controls">
+                                    <input type="text" name="action_date" class="form-control dateTimeInput datetimeinput" autocomplete="off" id="set_action_date_{{ task.id }}" value="{{ task.action_date|date:'Y-m-d h:i' }}">
+                                </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <p><span
+                            style="color: black;font-size: 20px;"> Created Date :    </span> {{ task.created_date|date:'Y.m.d' }}
+                    </p>
+
+
+                    <p><span style="color: black;font-size: 20px"> Subjects:</span>
+                        {% for subject in task.subject.all %}{{ subject }}{% if not forloop.last %},
+                        {% endif %}{% endfor %}</p>
+
+                    <p><span style="color: black;font-size: 20px">  Subtopics:</span>
+                        {% for subtopic in task.subtopic.all %}{{ subtopic }}{% if not forloop.last %},
+                        {% endif %}{% endfor %}</p>
+
+                    <p><span style="color: black;font-size: 20px">  Goals:</span>
+                        {% for goal in task.goal.all %}{{ goal }}{% if not forloop.last %},
+                        {% endif %}{% endfor %}</p>
+
+
+                    <p><span style="color: black;font-size: 20px">  Description:</span></p>
+                        {{ task.description |safe }}
+                        <a href="{% url 'core:task_update' task.pk %}" class="btn btn-primary mb-2">Update</a>
+
+                        <a href="{% url 'core:task_delete' task.pk %}" class="btn btn-danger mb-2">Delete</a>
+
+
+                </div>
+            </div>
+
+        {% empty %}
+            <h3> No records. </h3>
+        {% endfor %}
+    </div>
+    <div class="container">
+        {% if is_paginated %}
+            <div class="paginator-center">
+                Total Page : {% blocktrans with total_no=paginator.num_pages %}{{ total_no }} {% endblocktrans %}
+                Current Page : {% blocktrans with page_no=page_obj.number %}{{ page_no }} {% endblocktrans %}
+                <nav class="mt-2">
+                    <div class="paginator-numbers">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a href="?{% url_replace request 'page' 1 %}" class="page-link">
+                                    {% trans "first" %}
+                                </a>
+                            </li>
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a href="?{% url_replace request 'page' page_obj.previous_page_number %}"
+                                       class="page-link">
+                                        {{ page_obj.previous_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="page-item active">
+                                <a href="?{% url_replace request 'page' page_obj.number %}" class="page-link">
+                                    {{ page_obj.number }}
+                                </a>
+                            </li>
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a href="?{% url_replace request 'page' page_obj.next_page_number %}"
+                                       class="page-link">
+                                        {{ page_obj.next_page_number }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li class="page-item">
+                                <a href="?{% url_replace request 'page' 'last' %}" class="page-link">
+                                    {% trans "last" %}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+        $(document).ready(function () {
+            $("#id_label").change(function () {
+                console.log('change')
+                var selected = $("#id_label option:selected").text();
+                if (selected.includes('All')) {
+                    $('#id_label option').prop('selected', true);
+                }
+            });
+
+            $('.add-pomodoro-form').submit(function (e) {
+                e.preventDefault()
+                task_id = $(this).attr('id')
+                task_id = task_id.replace('add-', '')
+                const url = $(this).attr('action')
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                    },
+                    success: function (response) {
+                        var result = response
+                        $(`.pomodoro-count${task_id}`).text(result['pomodoro'])
+
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+
+            });
+            $('.remove-pomodoro-form').submit(function (e) {
+                e.preventDefault()
+                task_id = $(this).attr('id')
+                task_id = task_id.replace('remove-', '')
+                const url = $(this).attr('action')
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                    },
+                    success: function (response) {
+                        var result = response
+                        $(`.pomodoro-count${task_id}`).text(result['pomodoro'])
+
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+
+            });
+            $('.task-date-form').change(function (e) {
+                e.preventDefault()
+                date_task = $(this).attr('id');
+                date_task = date_task.split('-');
+                date_time = date_task[0];
+                task_id = date_task[1];
+                var date_loc='#set_action_date_'+task_id
+                var  date_value=$(date_loc).val();
+                const url = $(this).attr('action');
+                const task_closed=0;
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                        'date_time':date_value
+                    },
+                    success: function (response) {
+                        var result = response
+                        $(`#set-date-${task_id}`).text(result['date_time'])
+                    },
+                    error: function (response) {
+                        console.log('error', response)
+                    }
+                })
+
+            });
+
+            $('.selection-box').change(function (e) {
+                e.preventDefault()
+                closed_task = $(this).attr('id');
+                closed_task = closed_task.split('-');
+                const closed =   $(this).val()
+                const task_id = closed_task[1];
+                const url = $(this).attr('name');
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'pk': task_id,
+                        'task_closed': closed
+                    },
+                    success: function (response) {
+                        var result = response;
+                        var closed =result['task_closed']
+                        $(`#closed-${task_id}`).val(result['task_closed']);
+                    },
+                    error: function (response) {
+                        console.log('error', response);
+                    }
+
+
+            });
+                });
+
+        });
+
+
+
+
+{% endblock scripts %}

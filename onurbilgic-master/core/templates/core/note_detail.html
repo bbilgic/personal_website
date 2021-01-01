@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+
+        <h3> {{ object.title }}</h3>
+        <p><span
+                style="color: black;font-size: 20px;"> Created Date :    </span> {{ note.created_date|date:'Y.m.d' }}
+        </p>
+        <p><span
+                style="color: black;font-size: 20px;"> Note Date :    </span> {{ note.note_date|date:'Y.m.d' }}
+        </p>
+
+        <p><span style="color: black;font-size: 20px"> Subjects:</span>
+            {% for subject in object.subject.all %}{{ subject }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+
+
+        <p><span style="color: black;font-size: 20px">  Subtopics:</span>
+            {% for subtopic in object.subtopic.all %}{{ subtopic }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+
+        <p><span style="color: black;font-size: 20px">  Goals:</span>
+            {% for goal in object.goal.all %}{{ goal }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+        <p><span style="color: black;font-size: 20px">  Tasks:</span>
+            {% for task in object.task.all %}{{ task }}{% if not forloop.last %},
+            {% endif %}{% endfor %}</p>
+        <p><span style="color: black;font-size: 20px">  Text:</span>
+        <div> {{ object.text | safe }}</div>
+        <a href="{% url 'core:note_update' note.pk %}" class="btn btn-primary mb-2">Update</a>
+        <a href="{% url 'core:note_delete' note.pk %}" class="btn btn-danger mb-2">Delete</a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {#    <script>#}
+
+    {#    </script>#}
+{% endblock scripts %}

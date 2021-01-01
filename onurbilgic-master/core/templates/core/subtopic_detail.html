@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container  mt-2 mb-2" style="display:block;overflow:auto">
+
+    <h3> {{ object.name }}</h3>
+    <div > {{ object.description | safe}}</div>
+ <a href="{% url 'admin:core_subtopic_change' object.pk %}" class="btn btn-primary">Update</a>
+    <a href="{% url 'admin:core_subtopic_delete' object.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{#    <script>#}
+
+{#    </script>#}
+{% endblock scripts %}
