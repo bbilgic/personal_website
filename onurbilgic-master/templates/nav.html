@@ -1,0 +1,81 @@
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+    <a class="navbar-brand" href="{% url 'home' %}"><i class="fa fa-hat-cowboy"></i> Onur Bilgiç</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav  ml-auto">
+            {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        Main
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'core:value_vision_mission' %}">Values & Visions</a>
+                        <a class="dropdown-item" href="{% url 'core:subject_list' %}">Subjects</a>
+                        <a class="dropdown-item" href="{% url 'core:subtopic_list' %}">Subtopics</a>
+                        <a class="dropdown-item" href="{% url 'core:goal_list' %}">Goals</a>
+                        <a class="dropdown-item" href="{% url 'core:diary_list' %}">Diary</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        Blog
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'core:post_list' %}">Posts</a>
+                        <a class="dropdown-item" href="{% url 'core:post_draft_list' %}">Drafts</a>
+                    </div>
+
+                </li>
+
+                <li class="nav-item"><a class="nav-link "
+                                        href="{% url 'core:task_list' %}">Tasks</a></li>
+                <li class="nav-item"><a class="nav-link "
+                                        href="{% url 'core:note_list' %}">Notes</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown"
+                       role="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        Reports
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'core:pomodoro_report' %}">Pomodoro</a>
+                    </div>
+
+                </li>
+                                  <li class="nav-item"><a class="nav-link text-white "
+                                        href="{% url 'language:flashcards' %}">Flashcards</a></li>
+                <li class="nav-item"><a class="nav-link "
+                                        href="{% url 'admin:index' %}">Admin</a></li>
+
+                <li class="nav-item"><a class="nav-link "
+                                        href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link"
+                                        href="{% url 'logout' %}">Log out</a></li>
+                <li class="nav-item"><a class="nav-link  "
+                                        href="#">{{ user.username }}</a></li>
+
+            {% else %}
+                                <li class="nav-item"><a class="nav-link text-white "
+                                        href="{% url 'core:post_list' %}">Blog</a></li>
+                  <li class="nav-item"><a class="nav-link text-white "
+                                        href="{% url 'language:flashcards' %}">Flashcards</a></li>
+                <li class="nav-item"><a class="nav-link "
+                                        href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link"
+                                        href="{% url 'login' %}"><span
+                        class="fa fa-user"></span></a></li>
+            {% endif %}
+
+
+        </ul>
+    </div>
+
+</nav>

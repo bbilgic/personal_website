@@ -1,0 +1,1 @@
+web: gunicorn onurbilgic.wsgi --log-file -

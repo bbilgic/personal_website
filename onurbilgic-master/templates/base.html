@@ -1,0 +1,64 @@
+<html>
+{% load static %}
+{% load static i18n %}
+<header>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+    <title>Onur Bilgiç</title>
+    {% include 'css.html' %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
+    <link rel="dns-prefetch" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://www.drive.google.com">
+    <link rel="dns-prefetch" href="https://maps.googleapis.com">
+</header>
+
+<body>
+{% include 'nav.html' %}
+{% if messages %}
+    <div class='container'>
+        {% for message in messages %}
+            <h4 class="text">{{ message }}</h4>
+        {% endfor %}
+    </div>
+{% endif %}
+{% block content %}
+
+{% endblock content %}
+
+{% include 'js.html' %}
+  <script>
+{% block scripts  %}
+
+
+
+{% endblock scripts  %}
+
+   </script>
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
