@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load url_replace %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        {# TODO  add word link here and nav bar#}
+
+        <div class="form-group mb-2">  {% crispy form %} </div>
+        {% for word in object_list %}
+            <div class="container mt-2 " id="word-container-{{ word.id }}" style="display: none">
+                <h2 class="text-center" id="word-name-{{ word.id }}" style="display: none"> {{ word.name }}</h2>
+                {% if   word.word_image %}
+                    <div class="flex-container text-center">
+                        <img class="img-thumbnail" src="{{ word.word_image.url }}" alt="img" style="width:360px;height:270px ">
+                    </div>
+                {% endif %}
+                <p class="text-center mt-2"> {{ word.definiton }}</p>
+            </div>
+        {% empty %}
+
+            <h5> No records </h5>
+
+        {% endfor %}
+        {% if object_list %}
+            </div><h2 class="text-center" id="thank-you" style="display: none"> You have completed all words. </h2>
+        {% endif %}
+{% endblock %}
+{% block scripts %}
+
+    function shuffle(array) {
+      var currentIndex = array.length, temporaryValue, randomIndex;
+
+      // While there remain elements to shuffle...
+      while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+
+      return array;
+    }
+
+        var words = [
+            {% for word in object_list %}
+                {{ word.id }},
+            {% endfor %}
+        ]
+        var word_ids = shuffle( words)
+
+        $( "#start-learning" ).click(function() {
+        var i;
+        var thanks=0
+        for ( var i = 0; i < word_ids.length; i++) {
+        (function(index) {
+         setTimeout(function() { $('#word-container-' + word_ids[index]).show('slow') ; }, i * 8000);
+         setTimeout(function() {$('#word-name-' + word_ids[index]).show('slow') ; }, i * 8000 + 6000);
+         setTimeout(function() {  $('#word-container-' + word_ids[index]).hide('slow'); }, i * 8000 + 7800);
+         setTimeout(function() {$('#word-name-' + word_ids[index]).hide('slow') ; }, i * 8000 + 8800);
+         })(i);
+        }
+        setTimeout(function() {  $('#thank-you').show('slow'); }, i * 8000 + 1000);
+        setTimeout(function() {  $('#thank-you').hide('slow'); }, i * 8000 + 6000);
+        });
+
+
+{% endblock scripts %}
