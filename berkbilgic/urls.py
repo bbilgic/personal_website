@@ -19,7 +19,7 @@ from django.conf.urls import url
 from django.contrib.auth.views import LoginView,LogoutView
 
 from core.views import HomePageDetailView, AboutPageDetailView
-from onurbilgic import settings
+from berkbilgic import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),

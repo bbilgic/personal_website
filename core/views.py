@@ -126,13 +126,14 @@ class GoalDetailView(LoginRequiredMixin, DetailView):
     template_name = "core/goal_detail.html"
     model = Goal
 
-class NoteCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+class NoteCreateView(LoginRequiredMixin,  CreateView):
     model = Note
     form_class = NoteCreateAndEditForm
-    success_message = "Note created successfully"
+  
     template_name = 'core/note_new.html'
 
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS,  "Note created successfully")   
         return reverse('core:note_detail', kwargs={'pk': self.object.pk})
 
 

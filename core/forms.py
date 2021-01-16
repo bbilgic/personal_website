@@ -1,4 +1,4 @@
-from onurbilgic import settings
+from berkbilgic import settings
 from random import randint
 from core.models import *
 from django.forms import ModelForm

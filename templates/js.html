@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
-
+       
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
 
 <script src="https://kit.fontawesome.com/fe29917c38.js" crossorigin="anonymous"></script>
@@ -30,3 +30,52 @@
         ga('send', 'pageview');
 </script>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
+<script>
+        jQuery(document).ready( function () 
+    {
+    
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "25000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+   
+          } 
+
+    
+    
+    });
+</script>
+
+
+
+
+{% if messages %}
+{% for message in messages %} 
+
+<script type="text/javascript"> 
+    jQuery(document).ready( function () 
+    {
+    
+        toastr.{{ message.tags }}("{{ message |safe}}");
+    
+    });
+</script>
+
+{% endfor %}  
+{% endif %}
