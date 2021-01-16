@@ -1,1 +1,1 @@
-web: gunicorn onurbilgic.wsgi --log-file -
+web: gunicorn berkbilgic.wsgi --log-file -
