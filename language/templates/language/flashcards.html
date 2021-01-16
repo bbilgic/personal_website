@@ -3,6 +3,9 @@
 {% load url_replace %}
 {% load crispy_forms_tags %}
 {% block content %}
+<audio id="sound_{{ word.name }}" controls>
+    <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=try%20this&tl=en&total=1&idx=0&textlen=8" type="audio/mp3">
+</audio>
     <div class="container">
         {# TODO  add word link here and nav bar#}
 
@@ -14,8 +17,13 @@
                     <div class="flex-container text-center">
                         <img class="img-thumbnail" src="{{ word.word_image.url }}" alt="img" style="width:360px;height:270px ">
                     </div>
+              
                 {% endif %}
                 <p class="text-center mt-2"> {{ word.definiton }}</p>
+                
+           
+        
+       
             </div>
         {% empty %}
 
@@ -59,6 +67,10 @@
         var thanks=0
         for ( var i = 0; i < word_ids.length; i++) {
         (function(index) {
+
+        var x = document.getElementById("sound_"+word_ids[index]); 
+        console.log(x)
+        x.play();
          setTimeout(function() { $('#word-container-' + word_ids[index]).show('slow') ; }, i * 8000);
          setTimeout(function() {$('#word-name-' + word_ids[index]).show('slow') ; }, i * 8000 + 6000);
          setTimeout(function() {  $('#word-container-' + word_ids[index]).hide('slow'); }, i * 8000 + 7800);
