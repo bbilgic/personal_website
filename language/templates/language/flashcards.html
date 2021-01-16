@@ -14,10 +14,11 @@
                 {% if   word.word_image %}
                     <div class="flex-container text-center">
                         <img class="img-thumbnail" src="{{ word.word_image.url }}" alt="img" style="width:360px;height:270px ">
+                        <audio id="sound_{{ word.id }}" controls>
+                            <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ word.name }}&tl=en&total=1" type="audio/mp3">
+                        </audio>
                     </div>
-                    <audio id="sound_{{ word.id }}" controls>
-                        <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ word.name }}&tl=en&total=1" type="audio/mp3">
-                    </audio>
+                    
                 {% endif %}
                 <p class="text-center mt-2"> {{ word.definiton }}</p>
                 
@@ -60,7 +61,7 @@
                 {{ word.id }},
             {% endfor %}
         ]
-        var word_ids = shuffle(words)
+        var word_ids = words
 
         $( "#start-learning" ).click(function() {
         var i;
