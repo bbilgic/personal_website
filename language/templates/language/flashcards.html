@@ -15,7 +15,7 @@
                     <div class="flex-container text-center">
                         <img class="img-thumbnail" src="{{ word.word_image.url }}" alt="img" style="width:360px;height:270px ">
                     </div>
-                    <audio id="sound_{{ word.id }}" controls>
+                    <audio id="sound_{{ word.id }}" >
                         <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ word.name }}&tl=en&total=1" type="audio/mp3">
                     </audio>
                 {% endif %}
@@ -43,7 +43,7 @@
       while (0 !== currentIndex) {
 
         // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
+        randomIndex = currentIndex //Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
 
         // And swap it with the current element.
