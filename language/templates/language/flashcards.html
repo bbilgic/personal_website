@@ -15,7 +15,7 @@
                     <div class="flex-container text-center">
                         <img class="img-thumbnail" src="{{ word.word_image.url }}" alt="img" style="width:360px;height:270px ">
                     </div>
-                    <audio id="sound_{{ word.id }}" >
+                    <audio id="sound_{{ word.id }}" controls>
                         <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ word.name }}&tl=en&total=1" type="audio/mp3">
                     </audio>
                 {% endif %}
@@ -68,9 +68,15 @@
         for ( var i = 0; i < word_ids.length; i++) {
         (function(index) {
 
-        x = document.getElementById("sound_"+word_ids[index]); 
-        console.log(x)
-        x.play();
+        try {
+                x = document.getElementById("sound_"+word_ids[index]); 
+                console.log(x)
+                x.play();
+        }
+        catch(err) {
+               console.log("i cant play this ://")
+        }
+        
          setTimeout(function() { $('#word-container-' + word_ids[index]).show('slow') ; }, i * 8000);
          setTimeout(function() {$('#word-name-' + word_ids[index]).show('slow') ; }, i * 8000 + 6000);
          setTimeout(function() {  $('#word-container-' + word_ids[index]).hide('slow'); }, i * 8000 + 7800);
