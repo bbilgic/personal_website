@@ -16,18 +16,14 @@
                         <img class="img-thumbnail" src="{{ word.word_image.url }}" alt="img" style="width:360px;height:270px ">
                       
                     </div>
-
-                    <div class="flex-container text-center">
-                        <audio id="sound_{{ word.id }}" controls>
-                            <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ word.name }}&tl=en&total=1" type="audio/mp3">
-                        </audio>
-                    </div>
-                    
-                    
                 {% endif %}
                 <p class="text-center mt-2"> {{ word.definiton }}</p>
                 
-           
+                <div class="flex-container mt-1 text-center">
+                    <audio id="sound_{{ word.id }}" controls>
+                        <source src="https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={{ word.name }}&tl=en&total=1" type="audio/mp3">
+                    </audio>
+                </div>
         
        
             </div>
