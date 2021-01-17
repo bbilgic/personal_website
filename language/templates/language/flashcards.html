@@ -70,17 +70,18 @@
         for ( var i = 0; i < word_ids.length; i++) {
         (function(index) {
 
-        setTimeout(function() {
-        try {
-                x = document.getElementById("sound_"+word_ids[index]); 
-                console.log(x)
-                x.play();
-        }
-        catch(err) {
-               console.log("i cant play this ://")
-        } }, i * 8000);
+
          setTimeout(function() { $('#word-container-' + word_ids[index]).show('slow') ; }, i * 8000);
          setTimeout(function() {$('#word-name-' + word_ids[index]).show('slow') ; }, i * 8000 + 6000);
+         setTimeout(function() {
+            try {
+                    x = document.getElementById("sound_"+word_ids[index]); 
+                    console.log(x)
+                    x.play();
+            }
+            catch(err) {
+                   console.log("i cant play this ://")
+            } }, i * 8000);
          setTimeout(function() {  $('#word-container-' + word_ids[index]).hide('slow'); }, i * 8000 + 7800);
          setTimeout(function() {$('#word-name-' + word_ids[index]).hide('slow') ; }, i * 8000 + 8800);
          })(i);
