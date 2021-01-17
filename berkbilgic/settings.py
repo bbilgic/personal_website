@@ -84,14 +84,26 @@ WSGI_APPLICATION = 'berkbilgic.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+'''
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.sqlite3',
          'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
  }
+'''
 
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "d7k5g9dp74scr5",
+        "USER": "gtrkpmrufghvcj",
+        "PASSWORD": "acc79311180b84039a6b9fcd8fde036066404d7271be0afb8ed73f8cd90984b8",
+        "HOST": "ec2-18-203-7-163.eu-west-1.compute.amazonaws.com",
+        "PORT": "5432",
+    }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
